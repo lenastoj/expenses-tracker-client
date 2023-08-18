@@ -1,0 +1,4 @@
+{
+  "extends": "prettier-config-airbnb",
+  "singleQuote": true
+}
