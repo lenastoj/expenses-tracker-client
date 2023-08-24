@@ -1,17 +1,10 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import expenseService from '../../services/expense.service';
-import {
-  deleteExpense,
-  getExpense,
-  getExpenses,
-  setDeleteInfo,
-  setExpense,
-  setExpenses,
-} from './expenseSlice';
+import { setDeleteInfo, setExpense, setExpenses } from './expenseSlice';
 
-function* getExpensesHandler() {
+function* getExpensesHandler(action) {
   try {
-    const expenses = yield call(expenseService.getAll);
+    const expenses = yield call(expenseService.getAll, action.payload);
     yield put(setExpenses(expenses));
   } catch (e) {
     console.log(e);
@@ -38,13 +31,13 @@ function* deleteExpenseHandler(action) {
 }
 
 export function* watchGetExpenses() {
-  yield takeLatest(getExpenses.type, getExpensesHandler);
+  yield takeLatest('expense/getExpenses', getExpensesHandler);
 }
 
 export function* watchGetExpense() {
-  yield takeLatest(getExpense.type, getExpenseHandler);
+  yield takeLatest('expense/getExpense', getExpenseHandler);
 }
 
 export function* watchDeleteExpense() {
-  yield takeLatest(deleteExpense.type, deleteExpenseHandler);
+  yield takeLatest('expense/deleteExpense', deleteExpenseHandler);
 }

@@ -4,9 +4,10 @@ import httpService from './http.service';
 class ExpenseService {
   static client = httpService;
 
-  static getAll = async () =>
+  static getAll = async (page = 1) =>
     this.client.request({
       url: ROUTES.EXPENSES,
+      params: { page },
       method: 'GET',
     });
 

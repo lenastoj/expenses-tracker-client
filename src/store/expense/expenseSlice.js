@@ -9,7 +9,16 @@ const middlewareActions = {
 const expenseSlice = createSlice({
   name: 'expense',
   initialState: {
-    data: [],
+    data: {
+      data: [],
+      metadata: {
+        page: 0,
+        paginationLimit: 0,
+        count: 0,
+        total: 0,
+        totalPages: 0,
+      },
+    },
     expense: {},
     deleteInfo: false,
   },

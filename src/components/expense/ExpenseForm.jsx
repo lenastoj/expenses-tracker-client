@@ -1,20 +1,13 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import ExpenseService from '../../services/expense.service';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
 import Button from '../form/Button';
 import ROUTES from '../../utils/static';
-import { expenseSelect } from '../../store/expense/expenseSelector';
-import { getExpense } from '../../store/expense/expenseSlice';
 
-function ExpenseForm() {
-  const { id } = useParams();
-  const expense = useSelector(expenseSelect);
-  const dispatch = useDispatch();
-
+function ExpenseForm({ expense, onSubmit }) {
   const {
     register,
     handleSubmit,
@@ -22,16 +15,9 @@ function ExpenseForm() {
     setError,
     reset,
   } = useForm();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      dispatch(getExpense(id));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (expense && id) {
+    if (expense) {
       reset(expense);
     }
   }, [expense]);
@@ -44,13 +30,8 @@ function ExpenseForm() {
     formData.append('amount', data.amount);
     formData.append('comment', data.comment);
     try {
-      if (id) {
-        await ExpenseService.edit(id, formData);
-        navigate(ROUTES.EXPENSES);
-      } else {
-        await ExpenseService.create(formData);
-        reset();
-      }
+      await onSubmit(formData);
+      if (!expense) reset();
     } catch (error) {
       const errorData = error.response.data;
       if (errorData) {
@@ -64,7 +45,7 @@ function ExpenseForm() {
   return (
     <div className="container card p-3 mb-3 mt-5">
       <h2 className="my-0 mr-md-auto font-weight-normal pb-3">
-        {id ? 'Edit expense' : 'Add new expense'}
+        {expense ? 'Edit expense' : 'Add new expense'}
       </h2>
       <form className="p-20" onSubmit={formSubmitHandler}>
         <Input
@@ -120,24 +101,29 @@ function ExpenseForm() {
         {isSubmitSuccessful && (
           <div className="alert alert-success mt-3" role="alert">
             <p>
-              {id
+              {expense
                 ? 'You successfully edited an expense!'
                 : 'You successfully added an expense!'}
             </p>
           </div>
         )}
         <div className="d-flex justify-content-between">
-          {id ? <Button text="Edit" /> : <Button />}
-          <Button
-            type="button"
-            text="Back to list"
-            classButton="btn-outline-primary"
-            onClick={() => navigate(ROUTES.EXPENSES)}
-          />
+          {expense ? <Button text="Edit" /> : <Button />}
+          <Link to={ROUTES.EXPENSES}>Back to list</Link>
         </div>
       </form>
     </div>
   );
 }
+
+ExpenseForm.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  expense: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
+};
+
+ExpenseForm.defaultProps = {
+  expense: undefined,
+};
 
 export default ExpenseForm;

@@ -1,9 +1,9 @@
 const ROUTES = {
   HOME: '/',
   EXPENSES: '/expenses',
-  EXPENSES_NEW: '/expenses-new',
-  EXPENSES_EDIT: '/expenses-edit',
-  EXPENSES_EDIT2: '/expenses-edit/:id',
+  EXPENSES_NEW: '/expenses/add',
+  EXPENSES_EDIT: '/expenses/edit',
+  EXPENSES_EDIT_ID: '/expenses/edit/:id',
 };
 
 export default ROUTES;
