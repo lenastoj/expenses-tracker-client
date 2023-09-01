@@ -7,6 +7,18 @@ function* getExpensesHandler(action) {
     const expenses = yield call(expenseService.getAll, action.payload);
     yield put(setExpenses(expenses));
   } catch (e) {
+    yield put(
+      setExpenses({
+        data: [],
+        metadata: {
+          page: 0,
+          paginationLimit: 0,
+          count: 0,
+          total: 0,
+          totalPages: 0,
+        },
+      }),
+    );
     console.log(e);
   }
 }

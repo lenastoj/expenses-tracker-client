@@ -5,8 +5,11 @@ import { expenseSelect } from '../store/expense/expenseSelector';
 import { getExpense } from '../store/expense/expenseSlice';
 import ExpenseForm from '../components/expense/ExpenseForm';
 import ExpenseService from '../services/expense.service';
+import useAuthGuard from '../hooks/useAuthGuard';
 
 function ExpenseUpdate() {
+  useAuthGuard(true);
+
   const { id } = useParams();
   const expense = useSelector(expenseSelect);
   const dispatch = useDispatch();

@@ -4,6 +4,9 @@ const ROUTES = {
   EXPENSES_NEW: '/expenses/add',
   EXPENSES_EDIT: '/expenses/edit',
   EXPENSES_EDIT_ID: '/expenses/edit/:id',
+  LOGIN: '/login',
+  LOGOUT: '/logout',
+  USER: '/auth',
 };
 
 export default ROUTES;

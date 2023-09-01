@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
 import Button from '../form/Button';
-import ROUTES from '../../utils/static';
+// import ROUTES from '../../utils/static';
 
 function ExpenseForm({ expense, onSubmit }) {
   const {
@@ -84,9 +84,8 @@ function ExpenseForm({ expense, onSubmit }) {
           type="number"
           register={register}
           min={0}
-          step={0.01}
-          placeholder="0.00"
-          pattern="^\d*(\.\d{0,2})?$"
+          step={0.1}
+          placeholder="0.0"
           errors={errors}
         />
         <Textarea
@@ -109,7 +108,7 @@ function ExpenseForm({ expense, onSubmit }) {
         )}
         <div className="d-flex justify-content-between">
           {expense ? <Button text="Edit" /> : <Button />}
-          <Link to={ROUTES.EXPENSES}>Back to list</Link>
+          <Link to="..">Back to list</Link>
         </div>
       </form>
     </div>

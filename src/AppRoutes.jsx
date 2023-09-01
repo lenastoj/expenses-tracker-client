@@ -4,17 +4,24 @@ import ROUTES from './utils/static';
 import ExpenseCreate from './pages/ExpenseCreate';
 import Expenses from './pages/Expenses';
 import ExpenseUpdate from './pages/ExpenseUpdate';
+import Login from './pages/Login';
+import Navigation from './components/Navigation';
+import Auth from './pages/Auth';
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route
-        path={ROUTES.HOME}
-        element={<Navigate to={ROUTES.EXPENSES} replace />}
-      />
-      <Route path={ROUTES.EXPENSES} element={<Expenses />} />
-      <Route path={ROUTES.EXPENSES_NEW} element={<ExpenseCreate />} />
-      <Route path={ROUTES.EXPENSES_EDIT_ID} element={<ExpenseUpdate />} />
+      <Route path={ROUTES.HOME} element={<Navigation />}>
+        <Route
+          path={ROUTES.HOME}
+          element={<Navigate to={ROUTES.EXPENSES} replace />}
+        />
+        <Route path={ROUTES.EXPENSES} element={<Expenses />} />
+        <Route path={ROUTES.EXPENSES_NEW} element={<ExpenseCreate />} />
+        <Route path={ROUTES.EXPENSES_EDIT_ID} element={<ExpenseUpdate />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+      </Route>
       <Route
         path="*"
         element={<h3 className="container mt-5">Page not found</h3>}

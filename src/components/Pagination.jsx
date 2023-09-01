@@ -25,6 +25,10 @@ function Pagination({ totalPages, currentPage, setCurrentPage }) {
   }, [currentPage]);
 
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const pages2 = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  console.log(pages2);
+
   return (
     <nav aria-label="Page navigation example">
       <ul className="pagination flex-row justify-content-center">

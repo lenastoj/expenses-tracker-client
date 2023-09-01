@@ -4,12 +4,14 @@ import httpService from './http.service';
 class ExpenseService {
   static client = httpService;
 
-  static getAll = async (page = 1) =>
-    this.client.request({
+  static getAll = async (page = 1) => {
+    const response = await this.client.request({
       url: ROUTES.EXPENSES,
       params: { page },
       method: 'GET',
     });
+    return response;
+  };
 
   static get = async (id) =>
     this.client.request({

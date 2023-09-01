@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import {
   expensesSelect,
@@ -13,9 +13,9 @@ import Table from '../table/Table';
 import ROUTES from '../../utils/static';
 import expenseTableColumns from './expenseTableColumns';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-// import Button from '../form/Button';
 import Pagination from '../Pagination';
 import ConfirmModal from '../modal/ConfirmModal';
+import userSelect from '../../store/auth/authSelector';
 
 function ExpensesList() {
   const navigate = useNavigate();
@@ -23,15 +23,19 @@ function ExpensesList() {
   const expenses = useSelector(expensesSelect);
   const totalPages = useSelector(totalPagesSelect);
   const deleteInfo = useSelector(expenseDelete);
+  const user = useSelector(userSelect);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     dispatch(getExpenses(currentPage));
+    console.log(deleteInfo);
   }, [deleteInfo, currentPage]);
 
   const handleEdit = (id) => {
     navigate(`${ROUTES.EXPENSES_EDIT}/${id}`);
   };
+
+  console.log(expenses);
   const handleRemove = async (id) => {
     confirmAlert({
       // eslint-disable-next-line react/no-unstable-nested-components
@@ -50,8 +54,10 @@ function ExpensesList() {
       },
     });
   };
+
   return (
     <div>
+      {user && <h4>Hello {user.firstName}</h4>}
       <h2 className="my-0 mr-md-auto font-weight-normal pb-3">Expenses List</h2>
       {expenses && expenses[0] ? (
         <Table
@@ -61,7 +67,7 @@ function ExpensesList() {
       ) : (
         <h4 className="mb-5">Currently no expenses!</h4>
       )}
-      <Link to={ROUTES.EXPENSES_NEW}>Add new expense</Link>
+      {/* <Link to={ROUTES.EXPENSES_NEW}>Add new expense</Link> */}
       {totalPages > 1 && (
         <Pagination
           totalPages={totalPages}
