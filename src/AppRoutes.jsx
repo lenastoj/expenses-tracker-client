@@ -1,12 +1,12 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import ROUTES from './utils/static';
 import ExpenseCreate from './pages/ExpenseCreate';
 import Expenses from './pages/Expenses';
 import ExpenseUpdate from './pages/ExpenseUpdate';
 import Login from './pages/Login';
 import Navigation from './components/Navigation';
 import Auth from './pages/Auth';
+import { ROUTES } from './utils/static';
 
 function AppRoutes() {
   return (

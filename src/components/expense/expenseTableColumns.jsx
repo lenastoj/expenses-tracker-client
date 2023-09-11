@@ -3,12 +3,6 @@ import Button from '../form/Button';
 
 const expenseTableColumns = (handleEdit, handleRemove) => {
   return [
-    // {
-    //   title: 'ID',
-    //   render: (rowData) => {
-    //     return <span>{rowData.id}</span>;
-    //   },
-    // },
     {
       title: 'Date',
       render: (rowData) => {
@@ -68,25 +62,3 @@ const expenseTableColumns = (handleEdit, handleRemove) => {
   ];
 };
 export default expenseTableColumns;
-
-// {
-//   title: "Delete",
-//     render;
-// :
-//   (rowData) => {
-//     return (
-//       <Button
-//         type="button"
-//         classButton="btn-outline-danger"
-//         text="Delete"
-//         onClick={() => handleRemove(rowData.id)}
-//       />
-//     );
-//   },
-
-// {
-//   title: 'Delete',
-//     render: (rowData) => {
-//   return <Modal id={rowData.id} />;
-// },
-// },

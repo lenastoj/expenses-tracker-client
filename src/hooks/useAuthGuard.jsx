@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import ROUTES from '../utils/static';
+import { ROUTES } from '../utils/static';
 import userSelect from '../store/auth/authSelector';
 
 function useAuthGuard(authProtection) {

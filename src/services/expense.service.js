@@ -1,13 +1,27 @@
-import ROUTES from '../utils/static';
 import httpService from './http.service';
+import { ROUTES } from '../utils/static';
 
 class ExpenseService {
   static client = httpService;
 
-  static getAll = async (page = 1) => {
+  // static getAll = async (page) => {
+  //   const response = await this.client.request({
+  //     url: ROUTES.EXPENSES,
+  //     params: { page },
+  //     method: 'GET',
+  //   });
+  //   return response;
+  // };
+  static getAll = async ({ page, word, sort, order, month }) => {
+    const paramsUser = {
+      page,
+      ...(word && { word }),
+      ...(month && { month }),
+      ...(sort && { [sort]: order }),
+    };
     const response = await this.client.request({
       url: ROUTES.EXPENSES,
-      params: { page },
+      params: paramsUser,
       method: 'GET',
     });
     return response;

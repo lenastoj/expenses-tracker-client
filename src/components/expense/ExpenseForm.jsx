@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
@@ -5,7 +6,6 @@ import PropTypes from 'prop-types';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
 import Button from '../form/Button';
-// import ROUTES from '../../utils/static';
 
 function ExpenseForm({ expense, onSubmit }) {
   const {
@@ -116,7 +116,6 @@ function ExpenseForm({ expense, onSubmit }) {
 }
 
 ExpenseForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   expense: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
 };

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import Input from '../components/form/Input';
 import Button from '../components/form/Button';
-import ROUTES from '../utils/static';
+import { ROUTES } from '../utils/static';
 import AuthService from '../services/auth.service';
 import { getActiveUser } from '../store/auth/authSlice';
 import useAuthGuard from '../hooks/useAuthGuard';

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ROUTES from '../utils/static';
+import { ROUTES } from '../utils/static';
 import Button from './form/Button';
 import userSelect from '../store/auth/authSelector';
 import { getActiveUser, logout } from '../store/auth/authSlice';

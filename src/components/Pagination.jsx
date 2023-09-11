@@ -1,34 +1,16 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useSearchParams } from 'react-router-dom';
 
-function Pagination({ totalPages, currentPage, setCurrentPage }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const pageFromURL = Number(searchParams.get('page')) || 1;
-
+function Pagination({ totalPages, currentPage, setSearchParams }) {
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
-      setCurrentPage(newPage);
+      // setCurrentPage(newPage);
+      setSearchParams({ page: newPage });
     }
   };
 
-  useEffect(() => {
-    if (pageFromURL <= totalPages) {
-      setCurrentPage(pageFromURL);
-    }
-  }, []);
-
-  useEffect(() => {
-    const params = currentPage.toString();
-    setSearchParams(`?page=${params}`);
-  }, [currentPage]);
-
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-  const pages2 = Array.from({ length: totalPages }, (_, index) => index + 1);
-
-  console.log(pages2);
-
   return (
     <nav aria-label="Page navigation example">
       <ul className="pagination flex-row justify-content-center">
@@ -47,7 +29,8 @@ function Pagination({ totalPages, currentPage, setCurrentPage }) {
           >
             <button
               className="page-link"
-              onClick={() => setCurrentPage(page)}
+              // onClick={() => setCurrentPage(page)}
+              onClick={() => setSearchParams({ page })}
               key={page}
             >
               {page}
@@ -73,8 +56,12 @@ function Pagination({ totalPages, currentPage, setCurrentPage }) {
 
 Pagination.propTypes = {
   totalPages: PropTypes.number.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  setCurrentPage: PropTypes.func.isRequired,
+  currentPage: PropTypes.number,
+  // setCurrentPage: PropTypes.func.isRequired,
+  setSearchParams: PropTypes.func.isRequired,
+};
+Pagination.defaultProps = {
+  currentPage: 1,
 };
 
 export default Pagination;

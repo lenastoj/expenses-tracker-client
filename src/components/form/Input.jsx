@@ -15,16 +15,22 @@ function Input({
 }) {
   return (
     <div className="mb-3">
-      <label htmlFor={name} className="form-label">
-        {label}
-      </label>
-      <input
-        className="form-control"
-        id={id}
-        type={type}
-        {...register(name, rules)}
-        {...inputProps}
-      />
+      {label && (
+        <label htmlFor={name} className="form-label">
+          {label}
+        </label>
+      )}
+      {register ? (
+        <input
+          className="form-control"
+          id={id}
+          type={type}
+          {...register(name, rules)}
+          {...inputProps}
+        />
+      ) : (
+        <input className="form-control" id={id} type={type} {...inputProps} />
+      )}
       {errors && errors[name] && (
         <p className="text-danger">{errors[name].message}</p>
       )}
@@ -35,7 +41,7 @@ function Input({
 Input.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   errors: PropTypes.object,
   type: PropTypes.string.isRequired,
   register: PropTypes.func,
@@ -43,6 +49,7 @@ Input.propTypes = {
 };
 
 Input.defaultProps = {
+  label: undefined,
   register: undefined,
   rules: undefined,
   errors: undefined,

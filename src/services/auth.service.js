@@ -1,5 +1,5 @@
 import httpService from './http.service';
-import ROUTES from '../utils/static';
+import { ROUTES } from '../utils/static';
 
 class AuthService {
   static client = httpService;
