@@ -18,6 +18,7 @@ function SortFilter({
   const handleChange = (selectedOption) => {
     setSelected(selectedOption);
   };
+
   useEffect(() => {
     if (selected && selected.length > 0) {
       selected.forEach((item) => {

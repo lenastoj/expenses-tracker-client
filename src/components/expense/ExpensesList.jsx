@@ -20,31 +20,12 @@ import SortFilter from './SortFilter';
 import { useDebounce } from 'use-debounce';
 
 function ExpensesList() {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // const wordFromURL = searchParams.get('word') || '';
-  // const amountFromURL = searchParams.get('amount') || '';
-  // const dateFromURL = searchParams.get('date') || '';
-  // const monthFromURL = searchParams.get('month') || '';
-  //
-  // const pageFromURL = Number(searchParams.get('page') || 1);
-  // const [currentPage, setCurrentPage] = useState(pageFromURL);
-  //
-  // const [searchWord, setSearchWord] = useState({ word: wordFromURL });
-  // const [debouncedSearchWord] = useDebounce(searchWord, 850);
-  // const [selectedMonths, setSelectedMonths] = useState(monthFromURL);
-  // const [debouncedSelectedMonths] = useDebounce(selectedMonths, 850);
-  // const [sort, setSort] = useState();
-  // const [order, setOrder] = useState(amountFromURL || dateFromURL);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const wordFromURL = searchParams.get('word') || '';
-  const amountFromURL = searchParams.get('amount') || '';
-  const dateFromURL = searchParams.get('date') || '';
-  const monthFromURL = searchParams.get('month') || '';
-  const pageFromURL = Number(searchParams.get('page') || 1);
-  console.log('pageFromURL', pageFromURL);
-
-  const [currentPage, setCurrentPage] = useState(1);
+  const pageFromURL = Number(searchParams.get('page')) || 1;
+  // const wordFromURL = Number(searchParams.get('word'));
+  // const amountFromURL = Number(searchParams.get('amount'));
+  // const monthFromURL = Number(searchParams.get('month'));
 
   const [searchWord, setSearchWord] = useState({ word: '' });
   const [debouncedSearchWord] = useDebounce(searchWord, 850);
@@ -59,18 +40,17 @@ function ExpensesList() {
   const totalPages = useSelector(totalPagesSelect);
   const deleteInfo = useSelector(expenseDelete);
   const user = useSelector(userSelect);
+  const searchParamsUrl = new URLSearchParams();
 
   useEffect(() => {
-    // setSearchParams({page: pageFromURL})
-
-    const searchParamsUrl = new URLSearchParams();
-    const params = pageFromURL.toString();
+    // setSearchParams({ page: pageFromURL.toString() });
     sort && order && searchParamsUrl.set(sort, order);
     searchWord &&
-      searchWord.word &&
-      searchParamsUrl.set('word', searchWord.word);
+    searchWord.word &&
+    searchParamsUrl.set('word', searchWord.word);
     selectedMonths && searchParamsUrl.set('months', selectedMonths);
-    setSearchParams(`?page=${params}&${searchParamsUrl}`);
+    setSearchParams(`?page=${pageFromURL.toString()}&${searchParamsUrl}`);
+
     dispatch(
       getExpenses({
         page: pageFromURL,
@@ -90,10 +70,12 @@ function ExpensesList() {
   ]);
 
   const handleEdit = (id) => {
+    debugger;
     navigate(`${ROUTES.EXPENSES_EDIT}/${id}`);
   };
 
   const handleRemove = async (id) => {
+    debugger;
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
@@ -133,11 +115,6 @@ function ExpensesList() {
         <h4 className="mb-5">Currently no expenses!</h4>
       )}
       {totalPages > 1 && (
-        // <Pagination
-        //   totalPages={totalPages}
-        //   currentPage={currentPage}
-        //   setCurrentPage={setCurrentPage}
-        // />
         <Pagination
           totalPages={totalPages}
           currentPage={pageFromURL}
