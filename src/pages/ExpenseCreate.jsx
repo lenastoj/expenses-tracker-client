@@ -5,7 +5,7 @@ import useAuthGuard from '../hooks/useAuthGuard';
 
 function ExpenseCreate() {
   useAuthGuard(true);
-
+  console.log('create');
   const handleCreate = async (formData) => {
     await ExpenseService.create(formData);
   };

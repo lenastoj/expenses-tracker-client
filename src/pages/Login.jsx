@@ -40,7 +40,7 @@ function Login() {
     dispatch(getActiveUser());
     navigate(`${ROUTES.EXPENSES}?page=1`);
   }
-
+  console.log('login');
   return (
     <div className="container p-3 mb-3 mt-5">
       <div className="card p-3">

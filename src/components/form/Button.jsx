@@ -6,7 +6,7 @@ function Button({ type, classButton, text, onClick, ...buttonProps }) {
   return (
     <button
       type={type}
-      className={`btn ${classButton}`}
+      className={classButton}
       onClick={onClick}
       {...buttonProps}
     >
@@ -24,7 +24,7 @@ Button.propTypes = {
 
 Button.defaultProps = {
   type: 'submit',
-  classButton: 'btn-primary',
+  classButton: 'btn btn-primary',
   text: 'Submit',
   onClick: undefined,
 };

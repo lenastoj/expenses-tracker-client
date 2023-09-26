@@ -11,6 +11,7 @@ const expenseSlice = createSlice({
   initialState: {
     data: {
       data: [],
+      printData: [],
       metadata: {
         page: 0,
         paginationLimit: 0,

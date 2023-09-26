@@ -25,6 +25,7 @@ function ExpenseForm({ expense, onSubmit }) {
   const formSubmitHandler = handleSubmit(async (data) => {
     const formData = new FormData();
     formData.append('date', data.date);
+    console.log(data.date);
     formData.append('time', data.time);
     formData.append('description', data.description);
     formData.append('amount', data.amount);
@@ -84,8 +85,8 @@ function ExpenseForm({ expense, onSubmit }) {
           type="number"
           register={register}
           min={0}
-          step={0.1}
-          placeholder="0.0"
+          step={0.01}
+          placeholder="0.00"
           errors={errors}
         />
         <Textarea

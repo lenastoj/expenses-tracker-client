@@ -4,9 +4,11 @@ export const ROUTES = {
   EXPENSES_NEW: '/expenses/add',
   EXPENSES_EDIT: '/expenses/edit',
   EXPENSES_EDIT_ID: '/expenses/edit/:id',
+  EXPENSES_WEEK: '/expenses/week',
   LOGIN: '/login',
   LOGOUT: '/logout',
   USER: '/auth',
+  EXPENSES_PRINT: '/expenses/print',
 };
 
 export const MONTHS = [

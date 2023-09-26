@@ -7,8 +7,8 @@ function Table({ data, columns, tableClassName }) {
     <table className={`table ${tableClassName}`}>
       <thead>
         <tr>
-          {columns.map((headerItem) => (
-            <th scope="col" key={headerItem.title}>
+          {columns.map((headerItem, index) => (
+            <th scope="col" key={`${headerItem.title} ${index}`}>
               {headerItem.title}
             </th>
           ))}
@@ -18,7 +18,9 @@ function Table({ data, columns, tableClassName }) {
         {data.map((item) => (
           <tr key={item.id}>
             {columns.map((col, index) => (
-              <td key={index}>{col.render(item)} </td>
+              <td key={index} style={{ minWidth: '100px' }}>
+                {col.render(item)}{' '}
+              </td>
             ))}
           </tr>
         ))}

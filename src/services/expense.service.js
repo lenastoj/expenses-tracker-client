@@ -4,20 +4,22 @@ import { ROUTES } from '../utils/static';
 class ExpenseService {
   static client = httpService;
 
-  // static getAll = async (page) => {
-  //   const response = await this.client.request({
-  //     url: ROUTES.EXPENSES,
-  //     params: { page },
-  //     method: 'GET',
-  //   });
-  //   return response;
-  // };
-  static getAll = async ({ page, word, sort, order, month }) => {
+  static getAll = async ({
+    page,
+    word,
+    sort,
+    order,
+    month,
+    startDate,
+    endDate,
+  }) => {
     const paramsUser = {
       page,
       ...(word && { word }),
       ...(month && { month }),
-      ...(sort && { [sort]: order }),
+      ...(sort && { sort }),
+      ...(order && { order }),
+      ...(startDate && endDate && { startDate, endDate }),
     };
     const response = await this.client.request({
       url: ROUTES.EXPENSES,
@@ -25,6 +27,33 @@ class ExpenseService {
       method: 'GET',
     });
     return response;
+  };
+
+  static getWeekExpenses = async () => {
+    return this.client.request({
+      url: ROUTES.EXPENSES_WEEK,
+      method: 'GET',
+    });
+  };
+
+  static getExpensesToPrint = async ({
+    word,
+    sort,
+    order,
+    startDate,
+    endDate,
+  }) => {
+    const paramsUser = {
+      ...(word && { word }),
+      ...(sort && { sort }),
+      ...(order && { order }),
+      ...(startDate && endDate && { startDate, endDate }),
+    };
+    return this.client.request({
+      url: ROUTES.EXPENSES_PRINT,
+      params: paramsUser,
+      method: 'GET',
+    });
   };
 
   static get = async (id) =>

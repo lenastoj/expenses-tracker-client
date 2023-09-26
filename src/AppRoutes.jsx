@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Navigation from './components/Navigation';
 import Auth from './pages/Auth';
 import { ROUTES } from './utils/static';
+import ExpensesPrint from './pages/ExpensePrint';
 
 function AppRoutes() {
   return (
@@ -17,6 +18,7 @@ function AppRoutes() {
           element={<Navigate to={ROUTES.EXPENSES} replace />}
         />
         <Route path={ROUTES.EXPENSES} element={<Expenses />} />
+        <Route path={ROUTES.EXPENSES_PRINT} element={<ExpensesPrint />} />
         <Route path={ROUTES.EXPENSES_NEW} element={<ExpenseCreate />} />
         <Route path={ROUTES.EXPENSES_EDIT_ID} element={<ExpenseUpdate />} />
         <Route path="/auth" element={<Auth />} />

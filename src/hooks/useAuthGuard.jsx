@@ -1,20 +1,18 @@
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { ROUTES } from '../utils/static';
-import userSelect from '../store/auth/authSelector';
 
 function useAuthGuard(authProtection) {
-  const user = useSelector(userSelect);
   const navigate = useNavigate();
-
+  const cookie = Cookies.get('login');
   useEffect(() => {
-    if (!user && authProtection) {
+    if (!cookie && authProtection) {
       navigate(ROUTES.LOGIN);
-    } else if (user && !authProtection) {
+    } else if (cookie && !authProtection) {
       navigate(ROUTES.EXPENSES);
     }
-  }, [user]);
+  }, [cookie]);
 }
 
 export default useAuthGuard;

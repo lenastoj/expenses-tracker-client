@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ROUTES } from '../utils/static';
@@ -25,11 +25,9 @@ function Navigation() {
     }
   };
 
-  useEffect(() => {
-    dispatch(getActiveUser());
-  }, []);
-
   const user = useSelector(userSelect);
+  if (!user) dispatch(getActiveUser());
+
   return (
     <div>
       <nav className="navbar bg-body-tertiary border-bottom">
@@ -39,13 +37,16 @@ function Navigation() {
               <Link className="navbar-brand" to={ROUTES.EXPENSES}>
                 Expenses
               </Link>
+              <Link className="navbar-brand" to={ROUTES.EXPENSES_PRINT}>
+                Print
+              </Link>
               <Link className="nav nav-link" to={ROUTES.EXPENSES_NEW}>
                 Add new expense
               </Link>
             </div>
             <Button
               text="Logout"
-              classButton="btn-outline-danger"
+              classButton="btn btn-outline-danger"
               onClick={handleLogout}
             />
           </div>
