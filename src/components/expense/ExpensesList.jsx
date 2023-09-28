@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import { useDebounce } from 'use-debounce';
 import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
 import {
   expensesSelect,
   expenseDelete,
@@ -124,24 +125,30 @@ function ExpensesList({
   };
 
   const handleRemove = async (id) => {
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        return (
-          <ConfirmModal
-            title="Confirm Delete"
-            message="Are you sure you want to delete this expense?"
-            onClick1={onClose}
-            onClick2={() => {
-              dispatch(deleteExpense(id));
-              onClose();
-            }}
-          />
-        );
-      },
-    });
+    const cookie = Cookies.get('login');
+    if (!cookie) {
+      navigate(ROUTES.LOGIN);
+    } else {
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          return (
+            <ConfirmModal
+              title="Confirm Delete"
+              message="Are you sure you want to delete this expense?"
+              onClick1={onClose}
+              onClick2={() => {
+                dispatch(deleteExpense(id));
+                onClose();
+              }}
+            />
+          );
+        },
+      });
+    }
   };
 
   const handlePrint = async (week) => {
+    const cookie = Cookies.get('login');
     async function getData(boolean) {
       if (boolean) {
         return ExpenseService.getWeekExpenses();
@@ -155,39 +162,45 @@ function ExpensesList({
       });
     }
 
-    const {
-      data,
-      totalAmount,
-      averagePerDayAmounts,
-      startDateRange,
-      endDateRange,
-    } = await getData(week);
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        if (data && data.length >= 1) {
+    if (!cookie) {
+      navigate(ROUTES.LOGIN);
+    } else {
+      const {
+        data,
+        totalAmount,
+        averagePerDayAmounts,
+        startDateRange,
+        endDateRange,
+      } = await getData(week);
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          if (data && data.length >= 1) {
+            return (
+              <WeeklyExpensesTableModal
+                totalAmount={totalAmount}
+                onClose={onClose}
+                startOfWeek={startDateRange || startDate}
+                endOfWeek={endDateRange || endDate}
+                data={data}
+                averagePerDayAmounts={averagePerDayAmounts}
+              />
+            );
+          }
           return (
-            <WeeklyExpensesTableModal
-              totalAmount={totalAmount}
-              onClose={onClose}
-              startOfWeek={startDateRange || startDate}
-              endOfWeek={endDateRange || endDate}
-              data={data}
-              averagePerDayAmounts={averagePerDayAmounts}
+            <ConfirmModal
+              title={week ? 'This week expenses' : 'Expenses'}
+              message={
+                week
+                  ? 'No expenses for this week'
+                  : 'No expenses for this period'
+              }
+              onClick1={onClose}
+              buttonText1="Close"
             />
           );
-        }
-        return (
-          <ConfirmModal
-            title={week ? 'This week expenses' : 'Expenses'}
-            message={
-              week ? 'No expenses for this week' : 'No expenses for this period'
-            }
-            onClick1={onClose}
-            buttonText1="Close"
-          />
-        );
-      },
-    });
+        },
+      });
+    }
   };
 
   const handlePageChange = (newPage) => {

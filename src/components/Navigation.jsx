@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
 import { ROUTES } from '../utils/static';
 import Button from './form/Button';
 import userSelect from '../store/auth/authSelector';
@@ -9,6 +10,8 @@ import { getActiveUser, logout } from '../store/auth/authSlice';
 function Navigation() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const cookie = Cookies.get('login');
+
   const handleLogout = async () => {
     try {
       dispatch(
@@ -31,7 +34,7 @@ function Navigation() {
   return (
     <div>
       <nav className="navbar bg-body-tertiary border-bottom">
-        {user ? (
+        {cookie ? (
           <div className="container-fluid">
             <div className="d-flex ms-3">
               <Link className="navbar-brand" to={ROUTES.EXPENSES}>
