@@ -59,8 +59,8 @@ WeeklyExpensesTableModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   startOfWeek: PropTypes.string,
   endOfWeek: PropTypes.string,
-  totalAmount: PropTypes.string.isRequired,
-  averagePerDayAmounts: PropTypes.string.isRequired,
+  totalAmount: PropTypes.number.isRequired,
+  averagePerDayAmounts: PropTypes.number.isRequired,
   data: PropTypes.array.isRequired,
 };
 WeeklyExpensesTableModal.defaultProps = {

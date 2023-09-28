@@ -1,64 +1,62 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import SelectCustom from '../form/SelectCustom';
-
+import DatePicker from 'react-datepicker';
 import Input from '../form/Input';
-import { MONTHS } from '../../utils/static';
 import Button from '../form/Button';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function SortFilter({
   setSearchWord,
   searchWord,
-  setSelectedMonths,
-  selectedMonths,
-  weekExpenses,
+  handlePrint,
   setCurrentPage,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
 }) {
-  const [selected, setSelected] = useState(null);
-  const [valuesToFind] = useState(
-    selectedMonths ? selectedMonths.split(',').map(Number) : 0,
-  );
-  const [matchingMonths] = useState(
-    valuesToFind
-      ? MONTHS.filter((month) => valuesToFind.includes(month.value))
-      : 0,
-  );
+  const convertToDate = (date) => {
+    if (date && typeof date === 'string') {
+      const dateSplit = date.split('-');
+      return new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2]);
+    }
+    return date;
+  };
+  const showStartDate = convertToDate(startDate);
+  const showEndDate = convertToDate(endDate);
 
-  const array = [];
-  const handleChange = (selectedOption) => {
-    setSelected(selectedOption);
-    setCurrentPage(1);
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDateRange, setStartDateRange] = useState(
+    showStartDate || dateRange[0],
+  );
+  const [endDateRange, setEndDateRange] = useState(showEndDate || dateRange[1]);
+
+  const changeDateRange = (value) => {
+    setDateRange(value);
+    setStartDate(value[0]);
+    setStartDateRange(value[0]);
+    setEndDate(value[1]);
+    setEndDateRange(value[1]);
+    if (value[1]) {
+      setCurrentPage(1);
+    }
   };
 
-  useEffect(() => {
-    if (selectedMonths && !selected) {
-      return;
-    }
-    if (selected && selected.length > 0) {
-      selected.forEach((item) => {
-        array.push(item.value);
-        setSelectedMonths(array.toString());
-      });
-    } else {
-      setSelectedMonths();
-    }
-  }, [selected]);
   return (
     <div className="d-flex justify-content-between py-2 gap-2">
       <div className="w-50 h-25 d-flex flex-column gap-2">
         <div>
-          <h6>Find by month:</h6>
-          <Select
-            closeMenuOnSelect={false}
-            isMulti
-            name="colors"
-            options={MONTHS}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={handleChange}
-            defaultValue={matchingMonths}
+          <h6>Find by date range:</h6>
+          <DatePicker
+            selectsRange
+            startDate={startDateRange}
+            endDate={endDateRange}
+            dateFormat="yyyy/MM/dd"
+            onChange={(input) => {
+              changeDateRange(input);
+            }}
+            isClearable
           />
         </div>
         <div>
@@ -78,8 +76,13 @@ function SortFilter({
       </div>
       <div className="d-flex flex-column justify-content-end gap-2">
         <Button
-          text="Get expenses for current week"
-          onClick={() => weekExpenses()}
+          text="Expenses for current week"
+          onClick={() => handlePrint(true)}
+          classButton="btn btn-primary mb-3"
+        />
+        <Button
+          text="Print expenses"
+          onClick={() => handlePrint(false)}
           classButton="btn btn-primary mb-3"
         />
       </div>
@@ -90,14 +93,17 @@ function SortFilter({
 SortFilter.propTypes = {
   setSearchWord: PropTypes.func.isRequired,
   searchWord: PropTypes.string,
-  setSelectedMonths: PropTypes.func.isRequired,
-  selectedMonths: PropTypes.string,
-  weekExpenses: PropTypes.func.isRequired,
+  handlePrint: PropTypes.func.isRequired,
   setCurrentPage: PropTypes.func.isRequired,
+  startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  setStartDate: PropTypes.func.isRequired,
+  endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  setEndDate: PropTypes.func.isRequired,
 };
 SortFilter.defaultProps = {
-  selectedMonths: undefined,
   searchWord: undefined,
+  endDate: null,
+  startDate: null,
 };
 
 export default SortFilter;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ExpensesList from '../components/expense/ExpensesList';
 import useAuthGuard from '../hooks/useAuthGuard';
+import ExpensesList from '../components/expense/ExpensesList';
 
 function Expenses() {
   useAuthGuard(true);
@@ -12,7 +12,8 @@ function Expenses() {
     wordFromURL: searchParams.get('word') || '',
     orderFromURL: searchParams.get('order') || '',
     sortFromURL: searchParams.get('sort') || '',
-    monthFromURL: searchParams.get('month') || '',
+    startDateFromURL: searchParams.get('startDate') || '',
+    endDateFromURL: searchParams.get('endDate') || '',
   };
 
   return (
@@ -21,8 +22,9 @@ function Expenses() {
       wordFromURL={queryString.wordFromURL}
       orderFromURL={queryString.orderFromURL}
       sortFromURL={queryString.sortFromURL}
-      monthFromURL={queryString.monthFromURL}
       setSearchParams={setSearchParams}
+      startDateFromURL={queryString.startDateFromURL}
+      endDateFromURL={queryString.endDateFromURL}
     />
   );
 }

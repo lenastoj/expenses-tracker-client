@@ -1,14 +1,14 @@
 /* eslint-disable react/no-array-index-key,react/jsx-props-no-spreading */
 /* eslint-disable react/forbid-prop-types,react/no-array-index-key */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function SelectCustom({
+function Select({
   label,
   options,
   classSelect,
   selected,
+  change,
   ...selectProps
 }) {
   return (
@@ -19,13 +19,13 @@ function SelectCustom({
           aria-label="Default select example"
           {...selectProps}
           value={selected}
+          onChange={({ target }) => change(Number(target.value))}
         >
           {label && <option value="">{label}</option>}
           {options.map((item, index) => (
             <option
               key={index}
-              value={item.toLowerCase()}
-              // selected={selected === item.toLowerCase()}
+              value={typeof item === 'string' ? item.toLowerCase() : item}
             >
               {item}
             </option>
@@ -54,15 +54,17 @@ function SelectCustom({
   );
 }
 
-SelectCustom.propTypes = {
+Select.propTypes = {
   label: PropTypes.string,
   options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   classSelect: PropTypes.string,
   selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  change: PropTypes.func,
 };
-SelectCustom.defaultProps = {
+Select.defaultProps = {
   classSelect: 'form-select',
   selected: undefined,
   label: undefined,
+  change: undefined,
 };
-export default SelectCustom;
+export default Select;

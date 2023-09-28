@@ -11,14 +11,13 @@ const expenseTableColumns = (
   if (handleEdit && handleRemove) {
     return [
       {
-        // title: 'Date',
         title: (
           <Button
             text={sort === 'date' ? `Date ${order}` : 'Date'}
             type="button"
             classButton="btn p-0"
             onClick={() => handleSort('date')}
-            style={{ 'font-weight': 'bold' }}
+            style={{ fontWeight: 'bold' }}
           />
         ),
         render: (rowData) => {
@@ -26,14 +25,13 @@ const expenseTableColumns = (
         },
       },
       {
-        // title: 'Time',
         title: (
           <Button
             text={sort === 'time' ? `Time ${order}` : 'Time'}
             type="button"
             classButton="btn p-0"
             onClick={() => handleSort('time')}
-            style={{ 'font-weight': 'bold' }}
+            style={{ fontWeight: 'bold' }}
           />
         ),
         render: (rowData) => {
@@ -41,7 +39,6 @@ const expenseTableColumns = (
         },
       },
       {
-        // title: 'Description',
         title: (
           <Button
             text={
@@ -50,7 +47,7 @@ const expenseTableColumns = (
             type="button"
             classButton="btn p-0"
             onClick={() => handleSort('description')}
-            style={{ 'font-weight': 'bold' }}
+            style={{ fontWeight: 'bold' }}
           />
         ),
         render: (rowData) => {
@@ -58,14 +55,13 @@ const expenseTableColumns = (
         },
       },
       {
-        // title: 'Amount',
         title: (
           <Button
             text={sort === 'amount' ? `Amount ${order}` : 'Amount'}
             type="button"
             classButton="btn p-0"
             onClick={() => handleSort('amount')}
-            style={{ 'font-weight': 'bold' }}
+            style={{ fontWeight: 'bold' }}
           />
         ),
         render: (rowData) => {
@@ -73,14 +69,13 @@ const expenseTableColumns = (
         },
       },
       {
-        // title: 'Comment',
         title: (
           <Button
             text={sort === 'comment' ? `Comment ${order}` : 'Comment'}
             type="button"
             classButton="btn p-0"
             onClick={() => handleSort('comment')}
-            style={{ 'font-weight': 'bold' }}
+            style={{ fontWeight: 'bold' }}
           />
         ),
         render: (rowData) => {

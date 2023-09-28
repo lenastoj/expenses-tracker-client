@@ -37,9 +37,6 @@ function Navigation() {
               <Link className="navbar-brand" to={ROUTES.EXPENSES}>
                 Expenses
               </Link>
-              <Link className="navbar-brand" to={ROUTES.EXPENSES_PRINT}>
-                Print
-              </Link>
               <Link className="nav nav-link" to={ROUTES.EXPENSES_NEW}>
                 Add new expense
               </Link>

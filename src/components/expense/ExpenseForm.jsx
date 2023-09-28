@@ -25,7 +25,6 @@ function ExpenseForm({ expense, onSubmit }) {
   const formSubmitHandler = handleSubmit(async (data) => {
     const formData = new FormData();
     formData.append('date', data.date);
-    console.log(data.date);
     formData.append('time', data.time);
     formData.append('description', data.description);
     formData.append('amount', data.amount);

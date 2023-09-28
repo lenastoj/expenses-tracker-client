@@ -7,7 +7,7 @@ function Auth() {
 
   return (
     <div>
-      <h3>Name {user ? user.firstName : 'No name'}</h3>
+      <h3>Name {user ? user.firstName : ''}</h3>
     </div>
   );
 }

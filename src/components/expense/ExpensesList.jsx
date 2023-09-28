@@ -1,8 +1,10 @@
-/* eslint-disable */
+/* eslint-disable react/no-unstable-nested-components */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
+import { useDebounce } from 'use-debounce';
+import PropTypes from 'prop-types';
 import {
   expensesSelect,
   expenseDelete,
@@ -16,18 +18,18 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import Pagination from '../Pagination';
 import ConfirmModal from '../modal/ConfirmModal';
 import userSelect from '../../store/auth/authSelector';
-import SortFilter from './SortFilter';
-import { useDebounce } from 'use-debounce';
 import ExpenseService from '../../services/expense.service';
 import WeeklyExpensesTableModal from '../modal/WeeklyExpensesTableModal';
+import SortFilter from './SortFilter';
 
 function ExpensesList({
   pageFromURL,
   wordFromURL,
-  monthFromURL,
   orderFromURL,
   sortFromURL,
   setSearchParams,
+  startDateFromURL,
+  endDateFromURL,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -42,39 +44,62 @@ function ExpensesList({
     { word: wordFromURL } || { word: '' },
   );
   const [debouncedSearchWord] = useDebounce(searchWord, 850);
-  const [selectedMonths, setSelectedMonths] = useState(monthFromURL);
-  const [debouncedSelectedMonths] = useDebounce(selectedMonths, 850);
   const [order, setOrder] = useState(orderFromURL);
   const [sort, setSort] = useState(sortFromURL);
+  const [startDate, setStartDate] = useState(startDateFromURL);
+  const [endDate, setEndDate] = useState(endDateFromURL);
+
+  const formatsStringDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   useEffect(() => {
     if (sort && order) {
       searchParamsUrl.set('sort', sort);
       searchParamsUrl.set('order', order);
     }
-    searchWord &&
-      searchWord.word &&
+    if (searchWord && searchWord.word) {
       searchParamsUrl.set('word', searchWord.word);
-    selectedMonths && searchParamsUrl.set('month', selectedMonths);
+    }
+
+    if (startDate && endDate) {
+      if (typeof startDate === 'object' || typeof endDate === 'object') {
+        searchParamsUrl.set('startDate', formatsStringDate(startDate));
+        searchParamsUrl.set('endDate', formatsStringDate(endDate));
+        setStartDate(formatsStringDate(startDate));
+        setEndDate(formatsStringDate(endDate));
+      } else if (typeof startDate === 'string' || typeof endDate === 'string') {
+        searchParamsUrl.set('startDate', startDate);
+        searchParamsUrl.set('endDate', endDate);
+      }
+    }
     setSearchParams(`?page=${currentPage.toString()}&${searchParamsUrl}`);
 
-    dispatch(
-      getExpenses({
-        page: currentPage,
-        word: searchWord.word,
-        sort: sort,
-        order: order,
-        month: selectedMonths,
-      }),
-    );
-  }, [
-    currentPage,
-    deleteInfo,
-    debouncedSearchWord,
-    debouncedSelectedMonths,
-    order,
-    sort,
-  ]);
+    if (typeof startDate === 'string' || typeof endDate === 'string') {
+      dispatch(
+        getExpenses({
+          page: currentPage,
+          word: searchWord.word,
+          sort,
+          order,
+          startDate,
+          endDate,
+        }),
+      );
+    } else {
+      dispatch(
+        getExpenses({
+          page: currentPage,
+          word: searchWord.word,
+          sort,
+          order,
+        }),
+      );
+    }
+  }, [currentPage, deleteInfo, debouncedSearchWord, order, sort, endDate]);
 
   const handleSort = (title) => {
     if (!sort) {
@@ -116,32 +141,51 @@ function ExpensesList({
     });
   };
 
-  const handleWeekExpenses = async () => {
-    const { data, totalAmount, averagePerDayAmounts, startOfWeek, endOfWeek } =
-      await ExpenseService.getWeekExpenses();
+  const handlePrint = async (week) => {
+    async function getData(boolean) {
+      if (boolean) {
+        return ExpenseService.getWeekExpenses();
+      }
+      return ExpenseService.getExpensesToPrint({
+        word: searchWord.word,
+        sort,
+        order,
+        startDate: startDate || null,
+        endDate: endDate || null,
+      });
+    }
+
+    const {
+      data,
+      totalAmount,
+      averagePerDayAmounts,
+      startDateRange,
+      endDateRange,
+    } = await getData(week);
     confirmAlert({
       customUI: ({ onClose }) => {
-        if (data.length > 1) {
+        if (data && data.length >= 1) {
           return (
             <WeeklyExpensesTableModal
               totalAmount={totalAmount}
               onClose={onClose}
-              startOfWeek={startOfWeek}
-              endOfWeek={endOfWeek}
+              startOfWeek={startDateRange || startDate}
+              endOfWeek={endDateRange || endDate}
               data={data}
               averagePerDayAmounts={averagePerDayAmounts}
             />
           );
-        } else {
-          return (
-            <ConfirmModal
-              title="This week expenses"
-              message="No expenses for this week"
-              onClick1={onClose}
-              buttonText1="Close"
-            />
-          );
         }
+        return (
+          <ConfirmModal
+            title={week ? 'This week expenses' : 'Expenses'}
+            message={
+              week ? 'No expenses for this week' : 'No expenses for this period'
+            }
+            onClick1={onClose}
+            buttonText1="Close"
+          />
+        );
       },
     });
   };
@@ -159,12 +203,14 @@ function ExpensesList({
         {user && <h4>Hello {user.firstName}</h4>}
       </div>
       <SortFilter
-        setSelectedMonths={setSelectedMonths}
         searchWord={searchWord.word}
         setSearchWord={setSearchWord}
-        selectedMonths={selectedMonths}
-        weekExpenses={handleWeekExpenses}
+        handlePrint={handlePrint}
         setCurrentPage={setCurrentPage}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
       />
       {expenses && expenses[0] ? (
         <Table
@@ -190,5 +236,15 @@ function ExpensesList({
     </div>
   );
 }
+
+ExpensesList.propTypes = {
+  pageFromURL: PropTypes.number.isRequired,
+  wordFromURL: PropTypes.string.isRequired,
+  orderFromURL: PropTypes.string.isRequired,
+  sortFromURL: PropTypes.string.isRequired,
+  setSearchParams: PropTypes.func.isRequired,
+  startDateFromURL: PropTypes.string.isRequired,
+  endDateFromURL: PropTypes.string.isRequired,
+};
 
 export default ExpensesList;
