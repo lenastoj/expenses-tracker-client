@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import { useDebounce } from 'use-debounce';
 import PropTypes from 'prop-types';
@@ -18,19 +18,22 @@ import expenseTableColumns from './expenseTableColumns';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Pagination from '../Pagination';
 import ConfirmModal from '../modal/ConfirmModal';
-import userSelect from '../../store/auth/authSelector';
+import { userSelect } from '../../store/auth/authSelector';
 import ExpenseService from '../../services/expense.service';
 import WeeklyExpensesTableModal from '../modal/WeeklyExpensesTableModal';
 import SortFilter from './SortFilter';
 
 function ExpensesList({
-  pageFromURL,
   wordFromURL,
   orderFromURL,
   sortFromURL,
   setSearchParams,
   startDateFromURL,
   endDateFromURL,
+  guests,
+  guestName,
+  pageFromURL,
+  setPageFromURL,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -38,9 +41,8 @@ function ExpensesList({
   const totalPages = useSelector(totalPagesSelect);
   const deleteInfo = useSelector(expenseDelete);
   const user = useSelector(userSelect);
+  const { guestId, setGuestId } = useOutletContext();
   const searchParamsUrl = new URLSearchParams();
-
-  const [currentPage, setCurrentPage] = useState(pageFromURL);
   const [searchWord, setSearchWord] = useState(
     { word: wordFromURL } || { word: '' },
   );
@@ -77,12 +79,27 @@ function ExpensesList({
         searchParamsUrl.set('endDate', endDate);
       }
     }
-    setSearchParams(`?page=${currentPage.toString()}&${searchParamsUrl}`);
+    if (user || guestId) {
+      const hasGuest = guests.some(function (item) {
+        return item.value === guestId;
+      });
+      if (hasGuest) {
+        searchParamsUrl.set('id', guestId);
+      } else if (user && user.id) {
+        setGuestId(user.id);
+        searchParamsUrl.set('id', user.id);
+      }
+    }
+    setSearchParams(`?page=${pageFromURL.toString()}&${searchParamsUrl}`);
 
-    if (typeof startDate === 'string' || typeof endDate === 'string') {
+    if (
+      (typeof startDate === 'string' || typeof endDate === 'string') &&
+      user
+    ) {
       dispatch(
         getExpenses({
-          page: currentPage,
+          page: pageFromURL,
+          id: guestId || user.id,
           word: searchWord.word,
           sort,
           order,
@@ -90,34 +107,45 @@ function ExpensesList({
           endDate,
         }),
       );
-    } else {
+    } else if (user) {
       dispatch(
         getExpenses({
-          page: currentPage,
+          page: pageFromURL,
+          id: guestId || user.id,
           word: searchWord.word,
           sort,
           order,
         }),
       );
     }
-  }, [currentPage, deleteInfo, debouncedSearchWord, order, sort, endDate]);
+  }, [
+    pageFromURL,
+    deleteInfo,
+    debouncedSearchWord,
+    order,
+    sort,
+    endDate,
+    guestId,
+    user,
+    pageFromURL,
+  ]);
 
   const handleSort = (title) => {
     if (!sort) {
       setSort(title);
       setOrder('asc');
-      setCurrentPage(1);
+      setPageFromURL(1);
     } else if (sort === title && order === 'asc') {
       setOrder('desc');
-      setCurrentPage(1);
+      setPageFromURL(1);
     } else if (sort === title && order === 'desc') {
       setSort('');
       setOrder('');
-      setCurrentPage(1);
+      setPageFromURL(1);
     } else if (sort !== title) {
       setSort(title);
       setOrder('asc');
-      setCurrentPage(1);
+      setPageFromURL(1);
     }
   };
   const handleEdit = (id) => {
@@ -149,11 +177,13 @@ function ExpensesList({
 
   const handlePrint = async (week) => {
     const cookie = Cookies.get('login');
+
     async function getData(boolean) {
       if (boolean) {
-        return ExpenseService.getWeekExpenses();
+        return ExpenseService.getWeekExpenses({ id: guestId });
       }
       return ExpenseService.getExpensesToPrint({
+        id: guestId,
         word: searchWord.word,
         sort,
         order,
@@ -202,47 +232,58 @@ function ExpensesList({
       });
     }
   };
-
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
-      setCurrentPage(newPage);
+      setPageFromURL(newPage);
     }
   };
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
   return (
-    <div className="container card p-3 mb-3 mt-5">
+    <div className="container card p-3 mb-3 mt-2">
       <div className="d-flex justify-content-between">
         <h2 className="font-weight-normal">Expenses List</h2>
-        {user && <h4>Hello {user.firstName}</h4>}
+        {user && user.id === guestId ? (
+          <h4>Hello {user.firstName}</h4>
+        ) : (
+          <h4>{guestName} mode</h4>
+        )}
       </div>
       <SortFilter
         searchWord={searchWord.word}
         setSearchWord={setSearchWord}
         handlePrint={handlePrint}
-        setCurrentPage={setCurrentPage}
+        setCurrentPage={setPageFromURL}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
       />
+      {/* eslint-disable-next-line no-nested-ternary */}
       {expenses && expenses[0] ? (
-        <Table
-          data={expenses}
-          columns={expenseTableColumns(
-            handleEdit,
-            handleRemove,
-            handleSort,
-            sort,
-            order,
-          )}
-        />
+        guestId === user.id ? (
+          <Table
+            data={expenses}
+            columns={expenseTableColumns(
+              handleEdit,
+              handleRemove,
+              handleSort,
+              sort,
+              order,
+            )}
+          />
+        ) : (
+          <Table
+            data={expenses}
+            columns={expenseTableColumns(handleSort, sort, order)}
+          />
+        )
       ) : (
         <h4 className="mb-5 PRINT">Currently no expenses!</h4>
       )}
       {totalPages > 1 && (
         <Pagination
           totalPages={pages}
-          currentPage={currentPage}
+          currentPage={pageFromURL}
           handlePageChange={handlePageChange}
         />
       )}
@@ -251,13 +292,19 @@ function ExpensesList({
 }
 
 ExpensesList.propTypes = {
-  pageFromURL: PropTypes.number.isRequired,
   wordFromURL: PropTypes.string.isRequired,
   orderFromURL: PropTypes.string.isRequired,
   sortFromURL: PropTypes.string.isRequired,
   setSearchParams: PropTypes.func.isRequired,
   startDateFromURL: PropTypes.string.isRequired,
   endDateFromURL: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  guests: PropTypes.array.isRequired,
+  guestName: PropTypes.string,
+  pageFromURL: PropTypes.number.isRequired,
+  setPageFromURL: PropTypes.func.isRequired,
 };
-
+ExpensesList.defaultProps = {
+  guestName: undefined,
+};
 export default ExpensesList;

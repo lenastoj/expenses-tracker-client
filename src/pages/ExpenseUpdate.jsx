@@ -20,12 +20,20 @@ function ExpenseUpdate() {
       dispatch(getExpense(id));
     }
   }, []);
+  console.log(expense);
 
   const handleUpdate = async (formData) => {
     await ExpenseService.edit(id, formData);
     navigate(-1);
   };
-  return <ExpenseForm expense={expense} onSubmit={handleUpdate} />;
+  if (expense && expense.id) {
+    return <ExpenseForm expense={expense} onSubmit={handleUpdate} />;
+  }
+  return (
+    <h5 className="d-flex justify-content-center mt-5">
+      No expense with id {id}
+    </h5>
+  );
 }
 
 export default ExpenseUpdate;

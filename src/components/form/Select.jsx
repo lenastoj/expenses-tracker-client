@@ -40,12 +40,8 @@ function Select({
         >
           {label && <option value="">{label}</option>}
           {Object.keys(options).map((key) => (
-            <option
-              key={key}
-              value={key}
-              selected={selected === key.toLowerCase()}
-            >
-              {options[key]}
+            <option key={key.id} value={key.id} selected={selected}>
+              {options[key.id]}
             </option>
           ))}
         </select>

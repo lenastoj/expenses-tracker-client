@@ -9,6 +9,7 @@ export const ROUTES = {
   LOGOUT: '/logout',
   USER: '/auth',
   EXPENSES_PRINT: '/expenses/print',
+  GUEST: '/guest',
 };
 
 export const MONTHS = [

@@ -6,6 +6,7 @@ class ExpenseService {
 
   static getAll = async ({
     page,
+    id,
     word,
     sort,
     order,
@@ -15,6 +16,7 @@ class ExpenseService {
   }) => {
     const paramsUser = {
       page,
+      id,
       ...(word && { word }),
       ...(month && { month }),
       ...(sort && { sort }),
@@ -29,14 +31,16 @@ class ExpenseService {
     return response;
   };
 
-  static getWeekExpenses = async () => {
+  static getWeekExpenses = async (id) => {
     return this.client.request({
       url: ROUTES.EXPENSES_WEEK,
+      params: id,
       method: 'GET',
     });
   };
 
   static getExpensesToPrint = async ({
+    id,
     word,
     sort,
     order,
@@ -44,6 +48,7 @@ class ExpenseService {
     endDate,
   }) => {
     const paramsUser = {
+      id,
       ...(word && { word }),
       ...(sort && { sort }),
       ...(order && { order }),

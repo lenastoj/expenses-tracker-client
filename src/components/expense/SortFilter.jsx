@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
+import { useSelector } from 'react-redux';
 import Input from '../form/Input';
 import Button from '../form/Button';
 import 'react-datepicker/dist/react-datepicker.css';
+import { expensesSelect } from '../../store/expense/expenseSelector';
 
 function SortFilter({
   setSearchWord,
@@ -42,11 +44,11 @@ function SortFilter({
       setCurrentPage(1);
     }
   };
-
+  const expenses = useSelector(expensesSelect);
   return (
     <div className="d-flex justify-content-between py-2 gap-2">
       <div className="w-50 h-25 d-flex flex-column gap-2">
-        <div>
+        <div className="w-auto">
           <h6>Find by date range:</h6>
           <DatePicker
             selectsRange
@@ -78,12 +80,20 @@ function SortFilter({
         <Button
           text="Expenses for current week"
           onClick={() => handlePrint(true)}
-          classButton="btn btn-primary mb-3"
+          classButton={
+            expenses.length < 1
+              ? 'btn btn-primary mb-3 disabled'
+              : 'btn btn-primary mb-3'
+          }
         />
         <Button
           text="Print expenses"
           onClick={() => handlePrint(false)}
-          classButton="btn btn-primary mb-3"
+          classButton={
+            expenses.length < 1
+              ? 'btn btn-primary mb-3 disabled'
+              : 'btn btn-primary mb-3'
+          }
         />
       </div>
     </div>

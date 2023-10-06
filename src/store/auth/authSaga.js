@@ -1,14 +1,18 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { setActiveUser } from './authSlice';
+import { setActiveUser, setActiveUserGuests } from './authSlice';
 import AuthService from '../../services/auth.service';
 import { setExpenses } from '../expense/expenseSlice';
 
 function* getActiveUserHandler() {
   try {
     const data = yield call(AuthService.activeUser);
-    yield put(setActiveUser(data));
+    yield put(setActiveUser(data.user));
+    yield put(setActiveUserGuests(data.guests));
   } catch (e) {
-    console.log(e);
+    if (e.code === 'ERR_BAD_REQUEST') {
+      put(setActiveUser(null));
+    }
+    console.log('auth error', e);
   }
 }
 
