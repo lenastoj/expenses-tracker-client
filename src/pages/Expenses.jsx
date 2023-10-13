@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import useAuthGuard from '../hooks/useAuthGuard';
 import ExpensesList from '../components/expense/ExpensesList';
-import GuestMode from '../components/GuestMode';
-import { guestsSelect } from '../store/auth/authSelector';
+import HostMode from '../components/HostMode';
+import { hostsSelect } from '../store/auth/authSelector';
 
 function Expenses() {
   useAuthGuard(true);
@@ -12,40 +12,32 @@ function Expenses() {
   const [pageFromURL, setPageFromURL] = useState(
     Number(searchParams.get('page')) || 1,
   );
-  const [guestName, setGuestName] = useState();
   const queryString = {
-    wordFromURL: searchParams.get('word') || '',
+    searchQueryFromURL: searchParams.get('searchQuery') || '',
     orderFromURL: searchParams.get('order') || '',
     sortFromURL: searchParams.get('sort') || '',
     startDateFromURL: searchParams.get('startDate') || '',
     endDateFromURL: searchParams.get('endDate') || '',
   };
-  const guestsOriginal = useSelector(guestsSelect);
-  let guests = [{ value: 0, label: 'nothing' }];
-  if (guestsOriginal) {
-    guests = guestsOriginal.map((item) => {
+  const hostsOriginal = useSelector(hostsSelect);
+  let hosts = [{ value: 0, label: 'nothing' }];
+  if (hostsOriginal) {
+    hosts = hostsOriginal.map((item) => {
       const fullName = `${item.firstName} ${item.lastName}`;
       return { value: item.id, label: fullName };
     });
   }
   return (
     <div>
-      <GuestMode
-        guestName={guestName}
-        setGuestName={setGuestName}
-        setPageFromURL={setPageFromURL}
-        guests={guests}
-      />
-
+      <HostMode setPageFromURL={setPageFromURL} hosts={hosts} />
       <ExpensesList
-        wordFromURL={queryString.wordFromURL}
+        searchQueryFromURL={queryString.searchQueryFromURL}
         orderFromURL={queryString.orderFromURL}
         sortFromURL={queryString.sortFromURL}
         setSearchParams={setSearchParams}
         startDateFromURL={queryString.startDateFromURL}
         endDateFromURL={queryString.endDateFromURL}
-        guests={guests}
-        guestName={guestName}
+        hosts={hosts}
         pageFromURL={pageFromURL}
         setPageFromURL={setPageFromURL}
       />

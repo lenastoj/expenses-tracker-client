@@ -20,7 +20,6 @@ function ExpenseUpdate() {
       dispatch(getExpense(id));
     }
   }, []);
-  console.log(expense);
 
   const handleUpdate = async (formData) => {
     await ExpenseService.edit(id, formData);

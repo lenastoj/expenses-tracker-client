@@ -16,7 +16,7 @@ function Navigation() {
   if (!user) dispatch(getActiveUser());
 
   const [searchParams] = useSearchParams();
-  const [guestId, setGuestId] = useState(Number(searchParams.get('id')));
+  const [hostId, setHostId] = useState(Number(searchParams.get('id')));
   const handleLogout = async () => {
     try {
       dispatch(
@@ -41,7 +41,7 @@ function Navigation() {
               <Link className="navbar-brand" to={ROUTES.EXPENSES}>
                 Expenses
               </Link>
-              {((user && guestId === user.id) || (user && guestId === 0)) && (
+              {((user && hostId === user.id) || (user && hostId === 0)) && (
                 <Link className="nav nav-link" to={ROUTES.EXPENSES_NEW}>
                   Add new expense
                 </Link>
@@ -62,7 +62,7 @@ function Navigation() {
         )}
       </nav>
       <div>
-        <Outlet context={{ guestId, setGuestId }} />
+        <Outlet context={{ hostId, setHostId }} />
       </div>
     </div>
   );

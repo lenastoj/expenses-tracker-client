@@ -14,7 +14,7 @@ import {
 import { deleteExpense, getExpenses } from '../../store/expense/expenseSlice';
 import Table from '../table/Table';
 import { ROUTES } from '../../utils/static';
-import expenseTableColumns from './expenseTableColumns';
+import expenseTableColumns from '../table/data/expenseTableColumns';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Pagination from '../Pagination';
 import ConfirmModal from '../modal/ConfirmModal';
@@ -24,14 +24,13 @@ import WeeklyExpensesTableModal from '../modal/WeeklyExpensesTableModal';
 import SortFilter from './SortFilter';
 
 function ExpensesList({
-  wordFromURL,
+  searchQueryFromURL,
   orderFromURL,
   sortFromURL,
   setSearchParams,
   startDateFromURL,
   endDateFromURL,
-  guests,
-  guestName,
+  hosts,
   pageFromURL,
   setPageFromURL,
 }) {
@@ -41,12 +40,12 @@ function ExpensesList({
   const totalPages = useSelector(totalPagesSelect);
   const deleteInfo = useSelector(expenseDelete);
   const user = useSelector(userSelect);
-  const { guestId, setGuestId } = useOutletContext();
+  const { hostId, setHostId } = useOutletContext();
   const searchParamsUrl = new URLSearchParams();
-  const [searchWord, setSearchWord] = useState(
-    { word: wordFromURL } || { word: '' },
+  const [searchQuery, setSearchQuery] = useState(
+    { word: searchQueryFromURL } || { word: '' },
   );
-  const [debouncedSearchWord] = useDebounce(searchWord, 850);
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 850);
   const [order, setOrder] = useState(orderFromURL);
   const [sort, setSort] = useState(sortFromURL);
   const [startDate, setStartDate] = useState(startDateFromURL);
@@ -58,14 +57,14 @@ function ExpensesList({
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-
+  const chosenGuest = hosts.find((host) => host.value === hostId);
   useEffect(() => {
     if (sort && order) {
       searchParamsUrl.set('sort', sort);
       searchParamsUrl.set('order', order);
     }
-    if (searchWord && searchWord.word) {
-      searchParamsUrl.set('word', searchWord.word);
+    if (searchQuery && searchQuery.word) {
+      searchParamsUrl.set('searchQuery', searchQuery.word);
     }
 
     if (startDate && endDate) {
@@ -79,14 +78,14 @@ function ExpensesList({
         searchParamsUrl.set('endDate', endDate);
       }
     }
-    if (user || guestId) {
-      const hasGuest = guests.some(function (item) {
-        return item.value === guestId;
+    if (user || hostId) {
+      const hasGuest = hosts.some(function (item) {
+        return item.value === hostId;
       });
       if (hasGuest) {
-        searchParamsUrl.set('id', guestId);
+        searchParamsUrl.set('id', hostId);
       } else if (user && user.id) {
-        setGuestId(user.id);
+        setHostId(user.id);
         searchParamsUrl.set('id', user.id);
       }
     }
@@ -99,8 +98,8 @@ function ExpensesList({
       dispatch(
         getExpenses({
           page: pageFromURL,
-          id: guestId || user.id,
-          word: searchWord.word,
+          id: hostId || user.id,
+          searchQuery: searchQuery.word,
           sort,
           order,
           startDate,
@@ -111,8 +110,8 @@ function ExpensesList({
       dispatch(
         getExpenses({
           page: pageFromURL,
-          id: guestId || user.id,
-          word: searchWord.word,
+          id: hostId || user.id,
+          searchQuery: searchQuery.word,
           sort,
           order,
         }),
@@ -121,11 +120,11 @@ function ExpensesList({
   }, [
     pageFromURL,
     deleteInfo,
-    debouncedSearchWord,
+    debouncedSearchQuery,
     order,
     sort,
     endDate,
-    guestId,
+    hostId,
     user,
     pageFromURL,
   ]);
@@ -180,11 +179,12 @@ function ExpensesList({
 
     async function getData(boolean) {
       if (boolean) {
-        return ExpenseService.getWeekExpenses({ id: guestId });
+        return ExpenseService.getExpensesToPrint({ id: hostId, week: true });
       }
       return ExpenseService.getExpensesToPrint({
-        id: guestId,
-        word: searchWord.word,
+        id: hostId,
+        week: false,
+        searchQuery: searchQuery.word,
         sort,
         order,
         startDate: startDate || null,
@@ -242,15 +242,12 @@ function ExpensesList({
     <div className="container card p-3 mb-3 mt-2">
       <div className="d-flex justify-content-between">
         <h2 className="font-weight-normal">Expenses List</h2>
-        {user && user.id === guestId ? (
-          <h4>Hello {user.firstName}</h4>
-        ) : (
-          <h4>{guestName} mode</h4>
-        )}
+        {chosenGuest && <h4>{chosenGuest.label} mode</h4>}
+        {user && !chosenGuest && <h4>Hello {user.firstName}</h4>}
       </div>
       <SortFilter
-        searchWord={searchWord.word}
-        setSearchWord={setSearchWord}
+        searchQuery={searchQuery.word}
+        setSearchQuery={setSearchQuery}
         handlePrint={handlePrint}
         setCurrentPage={setPageFromURL}
         startDate={startDate}
@@ -260,7 +257,7 @@ function ExpensesList({
       />
       {/* eslint-disable-next-line no-nested-ternary */}
       {expenses && expenses[0] ? (
-        guestId === user.id ? (
+        hostId === user.id ? (
           <Table
             data={expenses}
             columns={expenseTableColumns(
@@ -292,19 +289,15 @@ function ExpensesList({
 }
 
 ExpensesList.propTypes = {
-  wordFromURL: PropTypes.string.isRequired,
+  searchQueryFromURL: PropTypes.string.isRequired,
   orderFromURL: PropTypes.string.isRequired,
   sortFromURL: PropTypes.string.isRequired,
   setSearchParams: PropTypes.func.isRequired,
   startDateFromURL: PropTypes.string.isRequired,
   endDateFromURL: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
-  guests: PropTypes.array.isRequired,
-  guestName: PropTypes.string,
+  hosts: PropTypes.array.isRequired,
   pageFromURL: PropTypes.number.isRequired,
   setPageFromURL: PropTypes.func.isRequired,
-};
-ExpensesList.defaultProps = {
-  guestName: undefined,
 };
 export default ExpensesList;

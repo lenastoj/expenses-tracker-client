@@ -7,23 +7,21 @@ import SelectDelete from './form/SelectDelete';
 import { ROUTES } from '../utils/static';
 import { userSelect } from '../store/auth/authSelector';
 
-function GuestMode({ setGuestName, setPageFromURL, guests }) {
+function HostMode({ setPageFromURL, hosts }) {
   const user = useSelector(userSelect);
-  const { guestId, setGuestId } = useOutletContext();
-  const setGuest = (id, name) => {
+  const { hostId, setHostId } = useOutletContext();
+  const setHost = (id) => {
     setPageFromURL(1);
-    setGuestId(id);
-    setGuestName(name);
+    setHostId(id);
   };
 
   const resetGuestId = () => {
     setPageFromURL(1);
-    setGuestId(null);
-    setGuestName(null);
+    setHostId(null);
   };
   return (
     <div className="container justify-content-end p-3 mt-4 ">
-      {user && guestId && guestId !== user.id ? (
+      {user && hostId && hostId !== user.id ? (
         <div className="d-flex justify-content-end">
           <Button
             text="Exit guest mode"
@@ -33,19 +31,18 @@ function GuestMode({ setGuestName, setPageFromURL, guests }) {
         </div>
       ) : (
         <div className="d-flex justify-content-end">
-          <SelectDelete guests={guests} setGuest={setGuest} />
+          <SelectDelete hosts={hosts} setHost={setHost} />
           <Link className="btn btn-primary ms-2" to={ROUTES.GUEST}>
-            Invite guests
+            Your guests / Invite guests
           </Link>
         </div>
       )}
     </div>
   );
 }
-GuestMode.propTypes = {
-  setGuestName: PropTypes.func.isRequired,
+HostMode.propTypes = {
   setPageFromURL: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
-  guests: PropTypes.array.isRequired,
+  hosts: PropTypes.array.isRequired,
 };
-export default GuestMode;
+export default HostMode;

@@ -10,6 +10,7 @@ export const ROUTES = {
   USER: '/auth',
   EXPENSES_PRINT: '/expenses/print',
   GUEST: '/guest',
+  HOST: '/host',
 };
 
 export const MONTHS = [

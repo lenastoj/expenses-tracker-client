@@ -7,7 +7,7 @@ import Navigation from './components/Navigation';
 import Auth from './pages/Auth';
 import { ROUTES } from './utils/static';
 import Expenses from './pages/Expenses';
-import AddGuest from './pages/AddGuest';
+import Guest from './pages/Guest';
 
 function AppRoutes() {
   return (
@@ -22,7 +22,7 @@ function AppRoutes() {
         <Route path={ROUTES.EXPENSES_EDIT_ID} element={<ExpenseUpdate />} />
         <Route path="/auth" element={<Auth />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.GUEST} element={<AddGuest />} />
+        <Route path={ROUTES.GUEST} element={<Guest />} />
       </Route>
       <Route
         path="*"

@@ -16,11 +16,38 @@ class GuestService {
     return response;
   };
 
-  static delete = async (id) =>
+  static deleteGuest = async (id) =>
     this.client.request({
       url: `${ROUTES.GUEST}/${id}`,
       method: 'DELETE',
     });
+
+  static deleteHost = async (id) =>
+    this.client.request({
+      url: `${ROUTES.HOST}/${id}`,
+      method: 'DELETE',
+    });
+
+  static getGuests = async ({
+    page = '1',
+    searchQuery,
+    sort,
+    sortDirection,
+  }) => {
+    const paramsGuest = {
+      page,
+      ...(searchQuery && { searchQuery }),
+      ...(sort && { sort }),
+      ...(sortDirection && { sortDirection }),
+    };
+
+    const response = await this.client.request({
+      url: ROUTES.GUEST,
+      params: paramsGuest,
+      method: 'GET',
+    });
+    return response;
+  };
 }
 
 export default GuestService;

@@ -9,8 +9,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { expensesSelect } from '../../store/expense/expenseSelector';
 
 function SortFilter({
-  setSearchWord,
-  searchWord,
+  setSearchQuery,
+  searchQuery,
   handlePrint,
   setCurrentPage,
   startDate,
@@ -68,9 +68,9 @@ function SortFilter({
             type="text"
             placeholder="Search by keyword..."
             id="word"
-            value={searchWord}
+            value={searchQuery}
             onChange={({ target }) => {
-              setSearchWord({ ...searchWord, word: target.value });
+              setSearchQuery({ ...searchQuery, word: target.value });
               setCurrentPage(1);
             }}
           />
@@ -101,8 +101,8 @@ function SortFilter({
 }
 
 SortFilter.propTypes = {
-  setSearchWord: PropTypes.func.isRequired,
-  searchWord: PropTypes.string,
+  setSearchQuery: PropTypes.func.isRequired,
+  searchQuery: PropTypes.string,
   handlePrint: PropTypes.func.isRequired,
   setCurrentPage: PropTypes.func.isRequired,
   startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
@@ -111,7 +111,7 @@ SortFilter.propTypes = {
   setEndDate: PropTypes.func.isRequired,
 };
 SortFilter.defaultProps = {
-  searchWord: undefined,
+  searchQuery: undefined,
   endDate: null,
   startDate: null,
 };

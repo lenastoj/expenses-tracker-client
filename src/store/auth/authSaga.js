@@ -1,13 +1,14 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { setActiveUser, setActiveUserGuests } from './authSlice';
+import { setActiveUser, setActiveUserHosts, setGuests } from './authSlice';
 import AuthService from '../../services/auth.service';
 import { setExpenses } from '../expense/expenseSlice';
+import guestService from '../../services/guest.service';
 
 function* getActiveUserHandler() {
   try {
     const data = yield call(AuthService.activeUser);
     yield put(setActiveUser(data.user));
-    yield put(setActiveUserGuests(data.guests));
+    yield put(setActiveUserHosts(data.hosts));
   } catch (e) {
     if (e.code === 'ERR_BAD_REQUEST') {
       put(setActiveUser(null));
@@ -40,10 +41,34 @@ function* logoutHandler(action) {
   }
 }
 
+function* getGuestsHandler(action) {
+  try {
+    const guests = yield call(guestService.getGuests, action.payload);
+    yield put(setGuests(guests));
+  } catch (e) {
+    yield put(
+      setGuests({
+        data: [],
+        metadata: {
+          page: 0,
+          paginationLimit: 0,
+          count: 0,
+          total: 0,
+          totalPages: 0,
+        },
+      }),
+    );
+    console.log(e);
+  }
+}
 export function* watchGetActiveUser() {
   yield takeLatest('auth/getActiveUser', getActiveUserHandler);
 }
 
 export function* watchLogout() {
   yield takeLatest('auth/logout', logoutHandler);
+}
+
+export function* watchGetGuests() {
+  yield takeLatest('auth/getGuests', getGuestsHandler);
 }

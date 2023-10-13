@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from '../form/Button';
 import printTablePdf from '../../utils/helpers/printTablePdf';
 import Table from '../table/Table';
-import expenseTableColumns from '../expense/expenseTableColumns';
+import expenseTableColumns from '../table/data/expenseTableColumns';
 
 function WeeklyExpensesTableModal({
   onClose,

@@ -8,8 +8,8 @@ import { getActiveUser } from '../../store/auth/authSlice';
 
 function Option(props) {
   const dispatch = useDispatch();
-  const removeGuest = async (value) => {
-    await guestService.delete(value);
+  const removeHost = async (value) => {
+    await guestService.deleteHost(value);
     dispatch(getActiveUser());
   };
   return (
@@ -20,7 +20,7 @@ function Option(props) {
           text="x"
           onClick={(e) => {
             e.stopPropagation();
-            removeGuest(props.value);
+            removeHost(props.value);
           }}
           classButton="btn btn-outline-danger"
         />
@@ -28,17 +28,17 @@ function Option(props) {
     </components.Option>
   );
 }
-function SelectDelete({ guests, setGuest }) {
+function SelectDelete({ hosts, setHost }) {
   return (
     <Select
       closeMenuOnSelect={false}
-      name="guests"
-      options={guests}
+      name="hosts"
+      options={hosts}
       components={{ Option }}
       className="basic-single"
       placeholder="See expenses of other users..."
       classNamePrefix="select"
-      onChange={(option) => setGuest(option.value, option.label)}
+      onChange={(option) => setHost(option.value)}
       styles={{
         control: (provided) => ({
           ...provided,

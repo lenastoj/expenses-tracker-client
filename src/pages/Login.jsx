@@ -20,8 +20,8 @@ function Login() {
     setError,
   } = useForm();
 
-  const { setGuestId } = useOutletContext();
-  setGuestId(undefined);
+  const { setHostId } = useOutletContext();
+  setHostId(undefined);
   const loginHandler = handleSubmit(async (data) => {
     const formData = new FormData();
     formData.append('email', data.email);
